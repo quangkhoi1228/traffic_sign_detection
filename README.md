@@ -35,6 +35,19 @@ python manage.py migrate
 python manage.py runserver
 
 </pre>
+<h2>Chạy server:</h2>
+<h3>Bước 1:  Mở Command Prompt và đến tư mục lưu Project</h3>
+<pre>
+cd parentProjectDir\projectDir
+</pre>
+<h3>Bước 2: Dán vào đoạn mã bên dưới</h3>
+<pre>
+cd traffic_sign_detection
+conda activate
+conda activate .\condaenvs
+python manage.py runserver
+
+</pre>
 <h1>MacOs/Linux</h1>
 <h2>Cài đặt:</h2>
 <h3>Bước 1: Mở Teminal và đến tư mục cần lưu Project</h3>
@@ -59,4 +72,17 @@ pip install scikit-image
 pip install tensorflow
 python manage.py migrate
 python manage.py runserver
+</pre>
+<h2>Chạy server:</h2>
+<h3>Bước 1:  Mở Teminal và đến tư mục lưu Project</h3>
+<pre>
+cd parentProjectDir/projectDir
+</pre>
+<h3>Bước 2: Dán vào đoạn mã bên dưới</h3>
+<pre>
+cd traffic_sign_detection
+conda activate
+conda activate ./condaenvs
+python manage.py runserver
+
 </pre>
