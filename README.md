@@ -1,5 +1,5 @@
-# web_django_in_5_minutes
-Tạo một website django trong 5 phút hỗ trợ Window, Linux, MacOs.<br>
+#Traffic Sign Detection
+Trích xuất biển báo giao thông sử dụng OpenCv.<br>
 
 <h1>Yêu cầu:</h1>
 <ul>
@@ -15,59 +15,46 @@ cd parentProjectDir\projectDir
 </pre>
 <h3>Bước 2: Dán vào đoạn mã bên dưới</h3>
 <pre>
-git clone https://github.com/quangkhoi1228/web_django_in_5_minutes.git
-cd web_django_in_5_minutes
+git clone https://github.com/quangkhoi1228/traffic_sign_detection.git
+cd traffic_sign_detection
 python helpers\get-pip.py
-pip install virtualenv
-virtualenv projectenv
-.\projectenv\Scripts\activate
+pip install conda
+conda activate
+conda create --prefix condaenvs python=3.6  --yes
+conda activate .\condaenvs
 pip install Django
-start cmd.exe /c python manage.py runserver
-explorer "http://localhost:8000/"
-echo done
-</pre>
-<h1>MacOs</h1>
-<h2>Cài đặt:</h2>
-<h3>Bước 1: Mở Teminal và đến tư mục cần lưu Project</h3>
-<pre>
-cd parentProjectDir/projectDir
-</pre>
-<h3>Bước 2: Dán vào đoạn mã bên dưới</h3>
-<pre>
-git clone https://github.com/quangkhoi1228/web_django_in_5_minutes.git
-cd web_django_in_5_minutes
-python helpers/get-pip.py
-pip install virtualenv
-virtualenv projectenv
-source projectenv/bin/activate
-pip install Django
-osascript -e 'tell app "Terminal"
-    do script "open http://localhost:8000/"    
-    do script "exit"       
-end tell'
-python manage.py runserver
-echo done
-</pre>
-<h1>Linux</h1>
-<h2>Cài đặt:</h2>
-<h3>Bước 1: Mở Teminal và đến tư mục cần lưu Project</h3>
-<pre>
-cd parentProjectDir/projectDir
-</pre>
-<h3>Bước 2: Dán vào đoạn mã bên dưới</h3>
-<pre>
-git clone https://github.com/quangkhoi1228/web_django_in_5_minutes.git
-cd web_django_in_5_minutes
-python helpers/get-pip.py
-pip install virtualenv
-virtualenv projectenv
-source projectenv/bin/activate
-pip install Django
-osascript -e 'tell app "Terminal"
-    do script "open http://localhost:8000/"    
-    do script "exit"       
-end tell'
+pip install opencv-python==3.4.2.16
+pip install opencv-contrib-python==3.4.2.16
+pip install notebook
+pip install matplotlib
+pip install scikit-image
+pip install tensorflow
 python manage.py migrate
 python manage.py runserver
-echo done
+
+</pre>
+<h1>MacOs/Linux</h1>
+<h2>Cài đặt:</h2>
+<h3>Bước 1: Mở Teminal và đến tư mục cần lưu Project</h3>
+<pre>
+cd parentProjectDir/projectDir
+</pre>
+<h3>Bước 2: Dán vào đoạn mã bên dưới</h3>
+<pre>
+git clone https://github.com/quangkhoi1228/traffic_sign_detection.git
+cd traffic_sign_detection
+python helpers/get-pip.py
+pip install conda
+conda activate
+conda create --prefix condaenvs python=3.6  --yes
+conda activate ./condaenvs
+pip install Django
+pip install opencv-python==3.4.2.16
+pip install opencv-contrib-python==3.4.2.16
+pip install notebook
+pip install matplotlib
+pip install scikit-image
+pip install tensorflow
+python manage.py migrate
+python manage.py runserver
 </pre>
