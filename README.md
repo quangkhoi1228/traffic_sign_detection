@@ -1,7 +1,7 @@
 #Traffic Sign Detection
 
 
-Trích xuất biển báo giao thông sử dụng OpenCv.<br>
+<p>Trích xuất biển báo giao thông sử dụng OpenCv.</p><br>
 
 <h1>Yêu cầu:</h1>
 <ul>
