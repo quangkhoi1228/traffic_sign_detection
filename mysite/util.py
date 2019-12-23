@@ -85,15 +85,21 @@ def checkWidthHeight(cnt):
 
     if widthDivisionHeightRatio <= 1.5 and widthDivisionHeightRatio >= 0.6:
         if w <= 30 or h <= 30:
+            print('x:'+str(x))
+            print('y:'+str(y))
+            print('w:'+str(w))
+            print('h:'+str(h))
+            print('w/h:'+str(widthDivisionHeightRatio))
             return False
         else:
-            #             print('x:'+str(x))
-            #             print('y:'+str(y))
-            #             print('w:'+str(w))
-            #             print('h:'+str(h))
-            #             print('w/h:'+str(widthDivisionHeightRatio))
+
             return True
     else:
+        print('x:'+str(x))
+        print('y:'+str(y))
+        print('w:'+str(w))
+        print('h:'+str(h))
+        print('w/h:'+str(widthDivisionHeightRatio))
         return False
 
 
@@ -112,11 +118,16 @@ def caculateColorPixelPercent(link, colorRangeObject):
     target = cv2.bitwise_and(img, img, mask=mask_r)
     x, y, w, h = cv2.boundingRect(mask_r)
     num_brown = cv2.countNonZero(mask_r)
-    perc_brown = num_brown/float(w*h)*100
-    return perc_brown
+    print('w'+str(w))
+    print('h'+str(h))
+    if h == 0:
+        return 0
+    else:
+        perc_brown = num_brown/float(w*h)*100
+        return perc_brown
 
 
-def checkColorPercent(link):
+def checkColorPercent(link, colorRangeObject):
     red = {
         'minRange1': (0, 100, 100),
         'maxRange1': (10, 255, 255),
@@ -130,15 +141,31 @@ def checkColorPercent(link):
         'maxRange2': np.array([172, 111, 255]),
     }
 
+    blue = {
+        'minRange1': np.array([80, 100, 100]),
+        'maxRange1': np.array([160, 255, 255]),
+        'minRange2': np.array([80, 100, 100]),
+        'maxRange2': np.array([105, 255, 255]),
+    }
+
+    color = colorRangeObject['color']
+
     redPercent = caculateColorPixelPercent(link, red)
     whitePercent = caculateColorPixelPercent(link, white)
+    bluePercent = caculateColorPixelPercent(link, blue)
     # print(redPercent)
     # print(whitePercent)
 
-    if redPercent >= 20 and whitePercent >= 10:
+    if color == 'red':
+        if redPercent >= 20 and whitePercent >= 10:
+            return True
+        else:
+            return False
+
+    if color == 'blue':
+        print('blue'+str(bluePercent))
+        print('white'+str(whitePercent))
         return True
-    else:
-        return False
 
 
 def removeContent(directory):
@@ -241,16 +268,25 @@ def cropAndDetectTrafficSign(context):
         return [10000]
 
 
-def detectRedBoundingTrafficSign(context, resultContext):
-    listCropImageName = []
+def detectColorBoundingTrafficSign(context, resultContext, colorRangeObject):
+
+    minRange1 = colorRangeObject['minRange1']
+    maxRange1 = colorRangeObject['maxRange1']
+    minRange2 = colorRangeObject['minRange2']
+    maxRange2 = colorRangeObject['maxRange2']
+    color = colorRangeObject['color']
+
+    if 'listCropImageName' not in resultContext:
+        listCropImageName = []
+    else:
+        listCropImageName = resultContext['listCropImageName']
+
     projectPath = getProjectPath()
-    print(context)
     url = projectPath + context['url']
     img = imreadx(url)
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    mask_r1 = cv2.inRange(hsv, (0, 100, 100), (10, 255, 255))
-    # imshowgrayx(img,'origin')
-    mask_r2 = cv2.inRange(hsv, (160, 100, 100), (180, 255, 255))
+    mask_r1 = cv2.inRange(hsv, minRange1, maxRange1)
+    mask_r2 = cv2.inRange(hsv, minRange2, maxRange2)
     # imshowgrayx(mask_r2,'Mask Range 2')
     mask_r = cv2.bitwise_or(mask_r1, mask_r2)
     # imshowgrayx(mask_r,'Mask for Red Region')
@@ -270,38 +306,69 @@ def detectRedBoundingTrafficSign(context, resultContext):
     directory = currentPythonFilePath+'/media/trafficsignresult'
     # removeContent(directory)
     os.chdir(directory+'/')
-    for index, cnt in enumerate(cnts):
-        try:
-            area = cv2.contourArea(cnt)
-            ellipse = cv2.fitEllipse(cnt)
-            cv2.ellipse(img2, ellipse, (0, 255, 0), 2)
-            isAcceptWidthHeightImage = checkWidthHeight(cnt)
-            if isAcceptWidthHeightImage == True:
-                x, y, w, h = cv2.boundingRect(cnt)
+    # for index, cnt in enumerate(cnts):
+    #     try:
+    #         area = cv2.contourArea(cnt)
+    #         ellipse = cv2.fitEllipse(cnt)
+    #         cv2.ellipse(img2, ellipse, (0, 255, 0), 2)
+    #         isAcceptWidthHeightImage = checkWidthHeight(cnt)
+    #         if isAcceptWidthHeightImage == True:
+    #             x, y, w, h = cv2.boundingRect(cnt)
+    #             crop = img[y:y+h, x:x+w]
+    # #             imshowx(crop,'Crop')
+    #             filename = color+'_'+str(index)+'_crop.jpg'
+    #             # print('  ')
+    #             # print(filename)
+    #             cv2.imwrite(filename, crop)
+    #             cv2.rectangle(img2, (x, y), (x+w, y+h), (0, 255, 0), 3)
+
+    #             isAcceptColorPercent = checkColorPercent(
+    #                 filename, colorRangeObject)
+    #             if isAcceptColorPercent != True:
+    #                 os.remove(filename)
+    #                 print('remove'+filename)
+    #             else:
+    #                 listCropImageName.append(filename)
+
+    #     except NameError:
+    #         print("ex")
+    #         # logging.exception("message")
+    #     except:
+    #         print("er")
+    #         logging.exception("message")
+
+    hierarchy = hierarchy[0]
+    for index, component in enumerate(zip(cnts, hierarchy)):
+        currentContour = component[0]
+        currentHierarchy = component[1]
+        isAcceptWidthHeightImage = checkWidthHeight(currentContour)
+        if isAcceptWidthHeightImage == True:
+            x, y, w, h = cv2.boundingRect(currentContour)
+            path = directory
+
+            if currentHierarchy[2] < 0:
+                # these are the innermost child components
+                # cv2.rectangle(img, (x, y), (x+w, y+h), (0, 0, 255), 3)
                 crop = img[y:y+h, x:x+w]
-    #             imshowx(crop,'Crop')
-                filename = str(index)+'_crop.jpg'
-                # print('  ')
-                # print(filename)
-                cv2.imwrite(filename, crop)
-                cv2.rectangle(img2, (x, y), (x+w, y+h), (0, 255, 0), 3)
-                isAcceptColorPercent = checkColorPercent(filename)
-                if isAcceptColorPercent != True:
-                    os.remove(filename)
-                    print('remove'+filename)
-                else:
-                    listCropImageName.append(filename)
-        except NameError:
-            print("ex")
-            # logging.exception("message")
-        except:
-            print("er")
-            # logging.exception("message")
+
+            elif currentHierarchy[3] < 0:
+                # these are the outermost parent components
+                # cv2.rectangle(img, (x, y), (x+w, y+h), (0, 255, 0), 3)
+                crop = img[y:y+h, x:x+w]
+
+            filename = color+'_'+str(index)+'_crop.jpg'
+            # print('  ')
+            # print(filename)
+            cv2.imwrite(os.path.join(path, filename), crop)
+            isAcceptColorPercent = checkColorPercent(
+                filename, colorRangeObject)
+            if isAcceptColorPercent != True:
+                os.remove(filename)
+                print('remove'+filename)
+            else:
+                listCropImageName.append(filename)
+
     context['listCropImageName'] = listCropImageName
-
-
-def detectBlueBoundingTrafficSign(context, resultContext):
-    return resultContext
 
 
 def detectAllTraffic(context):
@@ -310,8 +377,27 @@ def detectAllTraffic(context):
     removeContent(directory)
     originContext = context
     resultContext = context
-    detectRedBoundingTrafficSign(originContext, resultContext)
-    detectBlueBoundingTrafficSign(originContext, resultContext)
+    redColorRangeObject = {
+        'minRange1': (0, 100, 100),
+        'maxRange1': (10, 255, 255),
+        'minRange2': (160, 100, 100),
+        'maxRange2': (180, 255, 255),
+        'color': 'red'
+    }
+
+    detectColorBoundingTrafficSign(
+        context, resultContext, redColorRangeObject)
+
+    blueColorRangeObject = {
+        'minRange1': (80, 100, 100),
+        'maxRange1': (160, 255, 255),
+        'minRange2': (80, 100, 100),
+        'maxRange2': (105, 255, 255),
+        'color': 'blue'
+    }
+
+    detectColorBoundingTrafficSign(
+        context, resultContext, blueColorRangeObject)
     return resultContext
 
 
