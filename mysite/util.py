@@ -85,21 +85,21 @@ def checkWidthHeight(cnt):
 
     if widthDivisionHeightRatio <= 1.5 and widthDivisionHeightRatio >= 0.6:
         if w <= 30 or h <= 30:
-            print('x:'+str(x))
-            print('y:'+str(y))
-            print('w:'+str(w))
-            print('h:'+str(h))
-            print('w/h:'+str(widthDivisionHeightRatio))
+            # print('x:'+str(x))
+            # print('y:'+str(y))
+            # print('w:'+str(w))
+            # print('h:'+str(h))
+            # print('w/h:'+str(widthDivisionHeightRatio))
             return False
         else:
 
             return True
     else:
-        print('x:'+str(x))
-        print('y:'+str(y))
-        print('w:'+str(w))
-        print('h:'+str(h))
-        print('w/h:'+str(widthDivisionHeightRatio))
+        # print('x:'+str(x))
+        # print('y:'+str(y))
+        # print('w:'+str(w))
+        # print('h:'+str(h))
+        # print('w/h:'+str(widthDivisionHeightRatio))
         return False
 
 
@@ -118,8 +118,8 @@ def caculateColorPixelPercent(link, colorRangeObject):
     target = cv2.bitwise_and(img, img, mask=mask_r)
     x, y, w, h = cv2.boundingRect(mask_r)
     num_brown = cv2.countNonZero(mask_r)
-    print('w'+str(w))
-    print('h'+str(h))
+    # print('w'+str(w))
+    # print('h'+str(h))
     if h == 0:
         return 0
     else:
@@ -148,6 +148,14 @@ def checkColorPercent(link, colorRangeObject):
         'maxRange2': np.array([105, 255, 255]),
     }
 
+    black = {
+        'minRange1': (0, 0, 0),
+        'maxRange1': (180, 255, 30),
+        'minRange2': (0, 0, 0),
+        'maxRange2': (180, 255, 30),
+
+    }
+
     color = colorRangeObject['color']
 
     redPercent = caculateColorPixelPercent(link, red)
@@ -165,6 +173,10 @@ def checkColorPercent(link, colorRangeObject):
     if color == 'blue':
         print('blue'+str(bluePercent))
         print('white'+str(whitePercent))
+        return True
+
+    if color == 'black':
+
         return True
 
 
@@ -345,7 +357,8 @@ def detectColorBoundingTrafficSign(context, resultContext, colorRangeObject):
         if isAcceptWidthHeightImage == True:
             x, y, w, h = cv2.boundingRect(currentContour)
             path = directory
-
+            # cv2.rectangle(img, (x, y), (x+w, y+h), (0, 255, 0), 3)
+            # cv2.imwrite(os.path.join(path, color+'full.jpg'), img)
             if currentHierarchy[2] < 0:
                 # these are the innermost child components
                 # cv2.rectangle(img, (x, y), (x+w, y+h), (0, 0, 255), 3)
@@ -398,6 +411,7 @@ def detectAllTraffic(context):
 
     detectColorBoundingTrafficSign(
         context, resultContext, blueColorRangeObject)
+
     return resultContext
 
 
